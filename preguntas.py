@@ -207,7 +207,8 @@ def pregunta_10():
     #Convierto a string _c1
     data['_c1']=data['_c1'].astype(str)
     #Agrupo por valores de _c0 y agrego valores de _c1
-    tabla10=data.groupby(['_c0'], as_index=True).agg({'_c1':':'.join})
+    tabla10=data.groupby(['_c0'], as_index=False).agg({'_c1':':'.join})
+    tabla10.set_index('_c0', inplace=True)
  
     print(tabla10)
     return tabla10
