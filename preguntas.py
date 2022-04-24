@@ -7,6 +7,7 @@ Este archivo contiene las preguntas que se van a realizar en el laboratorio.
 Utilice los archivos `tbl0.tsv`, `tbl1.tsv` y `tbl2.tsv`, para resolver las preguntas.
 
 """
+
 import pandas as pd
 
 tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
@@ -22,8 +23,12 @@ def pregunta_01():
     40
 
     """
-    return
-
+    
+    i=len(tbl0)
+    print(i)
+    return i
+    
+pregunta_01()
 
 def pregunta_02():
     """
@@ -33,8 +38,12 @@ def pregunta_02():
     4
 
     """
-    return
+    shape_tbl0=tbl0.shape
+    col=shape_tbl0[1]
+    print(col)
 
+    return col
+pregunta_02()
 
 def pregunta_03():
     """
@@ -50,8 +59,13 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    #u=tbl0._c1.sort_values()
+    #u=u.value_counts(sort=False)
+    u=tbl0.groupby("_c1")['_c2'].count()
 
+    print(u)
+    return u
+pregunta_03()
 
 def pregunta_04():
     """
@@ -65,8 +79,10 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
-
+    meansheet=tbl0.groupby("_c1")['_c2'].mean()
+    print(meansheet)
+    return meansheet
+pregunta_04()
 
 def pregunta_05():
     """
@@ -82,8 +98,10 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
-
+    maxi=tbl0.groupby("_c1")['_c2'].max()
+    print(maxi)
+    return maxi
+pregunta_05()
 
 def pregunta_06():
     """
@@ -94,8 +112,11 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
-
+    c4=[i.upper()for i in tbl1._c4]
+    letras=sorted(set(c4))
+    print(letras)
+    return letras
+pregunta_06()
 
 def pregunta_07():
     """
@@ -110,8 +131,11 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
 
+    sum=tbl0.groupby("_c1")['_c2'].sum()
+    print(sum)
+    return sum
+pregunta_07()
 
 def pregunta_08():
     """
@@ -128,8 +152,12 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
-
+    suma=tbl0._c0+tbl0._c2
+    datasets_12 = pd.concat(objs=[tbl0,suma],axis=1,)
+    datasets_12.columns= ['_c0','_c1','_c2','_c3','suma']
+    print(datasets_12)
+    return datasets_12
+pregunta_08()  
 
 def pregunta_09():
     """
@@ -146,8 +174,14 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
-
+    
+    dates=pd.to_datetime(tbl0._c3, errors= "ignore" )
+    years=[(i[:4]) for i in dates]
+    tbl=tbl0.assign(year=years)
+    
+    print(tbl)
+    return tbl
+pregunta_09()
 
 def pregunta_10():
     """
@@ -162,9 +196,23 @@ def pregunta_10():
     2   C                    0:5:6:7:9
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
-    """
-    return
 
+    """
+    #Filtrar columnas 1 y 2
+    data= tbl0.filter(items=('_c1','_c2'))
+    #renombro columnas
+    #data.columns= ['_c0','_c1']
+    #para ordenar de acuerdo a los valores de la columna _c0
+    data=data.sort_values('_c2')
+    #Convierto a string _c1
+    data['_c2']=data['_c2'].astype(str)
+    #Agrupo por valores de _c0 y agrego valores de _c1
+    tabla10=data.groupby(['_c1'], as_index=False).agg({'_c2':':'.join})
+    tabla10.set_index('_c1', inplace=True)
+ 
+    print(tabla10)
+    return tabla10
+pregunta_10()
 
 def pregunta_11():
     """
@@ -182,8 +230,12 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
-
+    data=tbl1.sort_values('_c4')
+    tabla=data.groupby(['_c0'], as_index=False)
+    tabla=tabla.agg({'_c4':','.join})
+    print(tabla)
+    return tabla
+pregunta_11()
 
 def pregunta_12():
     """
@@ -200,8 +252,14 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
 
+    _c5=[(x[1]+':'+str(x[2])) for x in tbl2.values]
+    data=tbl2.assign(_c5=_c5)
+    data=data.sort_values('_c5')
+    T1=data.groupby(['_c0'], as_index=False).agg({'_c5':','.join})
+    print (T1)
+    return T1
+pregunta_12()
 
 def pregunta_13():
     """
@@ -217,4 +275,10 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+
+    union= pd.merge(tbl0,tbl2, on="_c0")
+    sum_c5b=union.groupby("_c1")["_c5b"].sum()
+    print(sum_c5b)
+    return sum_c5b
+
+pregunta_13()
