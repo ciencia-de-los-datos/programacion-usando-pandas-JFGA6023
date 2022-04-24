@@ -201,15 +201,14 @@ def pregunta_10():
     #Filtrar columnas 1 y 2
     data= tbl0.filter(items=('_c1','_c2'))
     #renombro columnas
-    data.columns= ['_c0','_c1']
+    #data.columns= ['_c0','_c1']
     #para ordenar de acuerdo a los valores de la columna _c0
-    data=data.sort_values('_c0')
+    data=data.sort_values('_c1')
     #Convierto a string _c1
-    data['_c1']=data['_c1'].astype(str)
+    data['_c2']=data['_c2'].astype(str)
     #Agrupo por valores de _c0 y agrego valores de _c1
-    tabla10=data.groupby(['_c0'], as_index=False).agg({'_c1':':'.join})
-    #Pongo a _c0 como indice
-    tabla10.set_index('_c0', inplace=True)
+    tabla10=data.groupby(['_c1'], as_index=True).agg({'_c2':':'.join})
+    #Pongo a columna de números al lado de _c0
     print(tabla10)
     return tabla10
 pregunta_10()
